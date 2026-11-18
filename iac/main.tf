@@ -36,7 +36,7 @@ resource "libvirt_cloudinit_disk" "init" {
   name  = "${local.vms[count.index]}-cloudinit.iso"
   pool  = "default"
 
-  user_data = templatefile("${path.module}/cloud_init.yaml", {
+  user_data = templatefile("${path.module}/cloud_init.cfg", {
     hostname = local.vms[count.index]
     ssh_key  = trimspace(file(pathexpand("~/.ssh/devops_lab.pub")))
   })

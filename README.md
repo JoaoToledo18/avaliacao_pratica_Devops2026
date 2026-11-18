@@ -58,7 +58,7 @@ A API usa o middleware `cors`. Ela permite apenas a origem da aplicação web (`
 │   ├── inventory          # IPs das VMs (grupos web e api)
 │   └── playbook.yml       # configura as VMs e implanta os contêineres
 ├── iac/
-│   ├── cloud_init.yaml    # usuário, chave SSH e instalação do Docker
+│   ├── cloud_init.cfg     # usuário, chave SSH e instalação do Docker
 │   └── main.tf            # cria a VM1 e a VM2 (libvirt)
 ├── app/
 │   ├── Dockerfile         # imagem Nginx com o HTML
