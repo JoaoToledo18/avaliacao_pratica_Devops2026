@@ -1,0 +1,73 @@
+---
+- name: Preparar VMs
+  hosts: all
+  become: true
+  tasks:
+    - name: Aguardar cloud-init terminar
+      ansible.builtin.command: cloud-init status --wait
+      changed_when: false
+
+    - name: Garantir Docker instalado
+      ansible.builtin.apt:
+        name: [docker.io, docker-compose-v2]
+        state: present
+        update_cache: true
+
+    - name: Garantir Docker ativo
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+- name: VM2 - API Node.js + MySQL
+  hosts: api
+  become: true
+  vars:
+    web_origin: "http://{{ hostvars['vm1'].ansible_host }}"
+  tasks:
+    - name: Copiar arquivos da API
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../api/"
+        dest: /opt/api/
+        mode: "0644"
+
+    - name: Definir origem permitida no CORS
+      ansible.builtin.copy:
+        dest: /opt/api/.env
+        content: "WEB_ORIGIN={{ web_origin }}\n"
+        mode: "0644"
+
+    - name: Subir API e MySQL
+      ansible.builtin.command: docker compose up -d --build
+      args:
+        chdir: /opt/api
+
+- name: VM1 - Servidor web com HTML
+  hosts: web
+  become: true
+  vars:
+    api_url: "http://{{ hostvars['vm2'].ansible_host }}:3000"
+  tasks:
+    - name: Copiar arquivos da aplicacao web
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../app/"
+        dest: /opt/app/
+        mode: "0644"
+
+    - name: Apontar o HTML para a API da VM2
+      ansible.builtin.copy:
+        dest: /opt/app/config.js
+        content: "const API_URL = '{{ api_url }}';\n"
+        mode: "0644"
+
+    - name: Construir imagem do servidor web
+      ansible.builtin.command: docker build -t cursos-web /opt/app
+
+    - name: Remover conteiner antigo
+      ansible.builtin.command: docker rm -f cursos-web
+      changed_when: false
+      failed_when: false
+
+    - name: Iniciar conteiner web na porta 80
+      ansible.builtin.command: >
+        docker run -d --name cursos-web --restart unless-stopped -p 80:80 cursos-web

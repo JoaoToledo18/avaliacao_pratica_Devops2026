@@ -1,0 +1,10 @@
+[web]
+vm1 ansible_host=192.168.122.71
+
+[api]
+vm2 ansible_host=192.168.122.10
+
+[all:vars]
+ansible_user=aluno
+ansible_ssh_private_key_file=~/.ssh/devops_lab
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'

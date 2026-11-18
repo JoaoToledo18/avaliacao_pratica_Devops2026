@@ -1,0 +1,6 @@
+*.zip
+*.pdf
+node_modules/
+.terraform/
+*.tfstate
+*.tfstate.*
