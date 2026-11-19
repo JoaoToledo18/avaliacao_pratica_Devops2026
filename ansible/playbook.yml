@@ -9,7 +9,7 @@
 
     - name: Garantir Docker instalado
       ansible.builtin.apt:
-        name: [docker.io, docker-compose-v2]
+        name: [docker.io, docker-compose-v2, docker-buildx]
         state: present
         update_cache: true
 

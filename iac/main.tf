@@ -48,6 +48,11 @@ resource "libvirt_domain" "vm" {
   memory = 2048
   vcpu   = 1
 
+  # Repassa a CPU real do host (a imagem mysql:8 exige x86-64-v2, que a CPU padrao qemu64 nao tem)
+  cpu {
+    mode = "host-passthrough"
+  }
+
   cloudinit = libvirt_cloudinit_disk.init[count.index].id
 
   network_interface {
