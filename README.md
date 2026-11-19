@@ -144,7 +144,7 @@ curl -X POST http://<IP_VM2>:3000/curso \
   -H "Content-Type: application/json" \
   -d '{"nome":"DevOps","instrutor":"Maria","preco":199.90,"vagas":30}'
 
-curl http://<IP_VM2>:3000/cursos
+curl http://<192.168.122.122>:3000/cursos
 ```
 
 Para conferir os dados direto no banco (na VM2):

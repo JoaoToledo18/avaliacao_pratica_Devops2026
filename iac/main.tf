@@ -13,6 +13,14 @@ provider "libvirt" {
 
 locals {
   vms = ["vm1", "vm2"] # vm1 = web | vm2 = api + mysql
+
+  # MACs fixos, iguais as reservas DHCP da rede "default" do libvirt.
+  # Sem isso cada VM nasce com MAC aleatorio, o dnsmasq casa o hostname
+  # com a reserva antiga e nao entrega IP (wait_for_lease estoura o tempo).
+  macs = {
+    vm1 = "52:54:00:DE:1A:A8" # 192.168.122.227
+    vm2 = "52:54:00:16:41:24" # 192.168.122.122
+  }
 }
 
 resource "libvirt_volume" "ubuntu_base" {
@@ -57,6 +65,7 @@ resource "libvirt_domain" "vm" {
 
   network_interface {
     network_name   = "default"
+    mac            = local.macs[local.vms[count.index]]
     wait_for_lease = true
   }
 
