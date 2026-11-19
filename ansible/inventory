@@ -1,8 +1,8 @@
 [web]
-vm1 ansible_host=192.168.122.71
+vm1 ansible_host=192.168.122.227
 
 [api]
-vm2 ansible_host=192.168.122.10
+vm2 ansible_host=192.168.122.122
 
 [all:vars]
 ansible_user=aluno
